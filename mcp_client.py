@@ -68,6 +68,7 @@ def _subprocess_env(**updates: str | None) -> dict[str, str]:
 llm = ChatGroq(
     model="openai/gpt-oss-120b",
     api_key=_require_env("GROQ_API_KEY", GROQ_API_KEY),
+    reasoning_effort="low",
 )
 
 
@@ -308,7 +309,7 @@ Return only the destination name.
 Do not add any explanation.
 """
 
-    response = llm.invoke(prompt)
+    response = llm.invoke(prompt, max_tokens=128)
 
     destination = str(
         response.content

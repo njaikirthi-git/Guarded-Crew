@@ -61,6 +61,7 @@ if not GROQ_API_KEY:
 llm = ChatGroq(
     model="openai/gpt-oss-120b",
     api_key=GROQ_API_KEY,
+    reasoning_effort="low",
 )
 
 # =========================
@@ -113,12 +114,33 @@ AGENT_ORDER = [
 ]
 
 
-def _llm_text(system_prompt: str, user_prompt: str) -> str:
+def _prompt_context(value: Any, max_chars: int) -> str:
+    if isinstance(value, (dict, list)):
+        text = json.dumps(value, ensure_ascii=False, separators=(",", ":"), default=str)
+    else:
+        text = str(value or "")
+
+    if len(text) <= max_chars:
+        return text
+
+    marker = "\n[truncated]"
+    excerpt = text[: max_chars - len(marker)]
+    if " " in excerpt:
+        excerpt = excerpt.rsplit(" ", 1)[0]
+    return excerpt + marker
+
+
+def _llm_text(
+    system_prompt: str,
+    user_prompt: str,
+    max_tokens: int = 128,
+) -> str:
     response = llm.invoke(
         [
             SystemMessage(content=system_prompt),
             HumanMessage(content=user_prompt),
-        ]
+        ],
+        max_tokens=max_tokens,
     )
     return str(response.content)
 
@@ -149,7 +171,7 @@ def _empty_constraints() -> dict[str, Any]:
 # Supervisor Agent + Input Guardrail
 # =========================
 def supervisor_agent(state: TravelState):
-    query = state["user_query"]
+    query = _prompt_context(state["user_query"], 1200)
     llm_calls = state.get("llm_calls", 0)
 
     guardrail_prompt = f"""
@@ -178,6 +200,7 @@ User request:
             "You are the input guardrail for a travel-planning application. "
             "Return strict JSON only.",
             guardrail_prompt,
+            max_tokens=256,
         )
         guardrail_result = _json_from_llm(guardrail_raw)
         allowed = bool(guardrail_result.get("allowed", True))
@@ -238,6 +261,7 @@ User request:
         supervisor_raw = _llm_text(
             "You route work to travel specialist agents. Return strict JSON only.",
             supervisor_prompt,
+            max_tokens=512,
         )
         parsed = _json_from_llm(supervisor_raw)
         requested_agents = parsed.get("selected_agents", [])
@@ -331,16 +355,17 @@ def flight_agent(state: TravelState):
         print("\nAIRLINES:", airlines)
 
         prompt = FLIGHT_AGENT_PROMPT.format(
-            query=query,
-            airport_data=str(airports)[:3000],
-            airline_data=str(airlines)[:3000],
+            query=_prompt_context(query, 1200),
+            airport_data=_prompt_context(airports, 1400),
+            airline_data=_prompt_context(airlines, 1400),
         )
 
         response = llm.invoke(
             [
                 SystemMessage(content="You are an expert travel flight planner."),
                 HumanMessage(content=prompt),
-            ]
+            ],
+            max_tokens=700,
         )
         flight_data = response.content
     except Exception as exc:
@@ -451,19 +476,19 @@ def budget_agent(state: TravelState):
 Analyze whether this trip is realistic for the user's budget.
 
 User Query:
-{state['user_query']}
+{_prompt_context(state['user_query'], 1200)}
 
 Trip Constraints:
-{state.get('trip_constraints', {})}
+{_prompt_context(state.get('trip_constraints', {}), 500)}
 
 Flight Results:
-{state.get('flight_results', '')}
+{_prompt_context(state.get('flight_results', ''), 1400)}
 
 Hotel Results:
-{state.get('hotel_results', '')}
+{_prompt_context(state.get('hotel_results', ''), 1800)}
 
 Weather Results:
-{state.get('weather_results', '')}
+{_prompt_context(state.get('weather_results', ''), 1000)}
 
 Return:
 1. Estimated cost categories
@@ -478,7 +503,8 @@ If exact live prices are unavailable, clearly label estimates as approximate.
         [
             SystemMessage(content="You are a practical travel budget analyst."),
             HumanMessage(content=prompt),
-        ]
+        ],
+        max_tokens=800,
     )
 
     return {
@@ -496,22 +522,22 @@ def itinerary_agent(state: TravelState):
 Create a complete travel itinerary.
 
 User Query:
-{state['user_query']}
+{_prompt_context(state['user_query'], 1200)}
 
 Trip Constraints:
-{state.get('trip_constraints', {})}
+{_prompt_context(state.get('trip_constraints', {}), 500)}
 
 Flight Results:
-{state.get('flight_results', '')}
+{_prompt_context(state.get('flight_results', ''), 1000)}
 
 Hotel Results:
-{state.get('hotel_results', '')}
+{_prompt_context(state.get('hotel_results', ''), 1500)}
 
 Weather Results:
-{state.get('weather_results', '')}
+{_prompt_context(state.get('weather_results', ''), 800)}
 
 Budget Results:
-{state.get('budget_results', '')}
+{_prompt_context(state.get('budget_results', ''), 1200)}
 
 Make the itinerary practical, budget-aware, and easy to follow.
 Create a clear draft that is ready for human review.
@@ -521,7 +547,8 @@ Create a clear draft that is ready for human review.
         [
             SystemMessage(content="You are an expert travel planner."),
             HumanMessage(content=prompt),
-        ]
+        ],
+        max_tokens=1400,
     )
 
     approval_request = (
@@ -584,28 +611,28 @@ The user requested a revision. Apply this feedback carefully:
 Generate the final travel response for the user.
 
 Human Review:
-{review_instruction}
+{_prompt_context(review_instruction, 800)}
 
 User Request:
-{state['user_query']}
+{_prompt_context(state['user_query'], 1000)}
 
 Supervisor Constraints:
-{state.get('trip_constraints', {})}
+{_prompt_context(state.get('trip_constraints', {}), 400)}
 
 Flights:
-{state.get('flight_results', '')}
+{_prompt_context(state.get('flight_results', ''), 700)}
 
 Hotels:
-{state.get('hotel_results', '')}
+{_prompt_context(state.get('hotel_results', ''), 700)}
 
 Weather:
-{state.get('weather_results', '')}
+{_prompt_context(state.get('weather_results', ''), 700)}
 
 Budget Analysis:
-{state.get('budget_results', '')}
+{_prompt_context(state.get('budget_results', ''), 800)}
 
 Draft Itinerary:
-{state.get('itinerary', '')}
+{_prompt_context(state.get('itinerary', ''), 3500)}
 
 Format the final answer beautifully using these sections:
 1. Trip Summary
@@ -630,7 +657,8 @@ Important:
                 content="You are a professional AI travel booking assistant."
             ),
             HumanMessage(content=final_prompt),
-        ]
+        ],
+        max_tokens=1200,
     )
 
     return {
