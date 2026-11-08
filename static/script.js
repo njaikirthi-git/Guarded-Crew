@@ -3,11 +3,11 @@ let latestAnswerMarkdown = "";
 let waitingForApproval = false;
 
 const AGENT_LABELS = {
-  flight_agent: "✈️ Flight Agent",
-  hotel_agent: "🏨 Hotel Agent",
-  weather_agent: "🌦️ Weather Agent",
-  budget_agent: "💰 Budget Agent",
-  itinerary_agent: "🗓️ Itinerary Agent"
+  flight_agent: "Flights",
+  hotel_agent: "Accommodation",
+  weather_agent: "Weather",
+  budget_agent: "Budget",
+  itinerary_agent: "Itinerary"
 };
 
 function setPrompt(text) {
@@ -92,7 +92,7 @@ function showResult(answer, threadId, isDraft = false) {
 
   renderMarkdown(resultBox, latestAnswerMarkdown);
   threadInfo.textContent = `Thread ID: ${threadId}`;
-  resultTitle.textContent = isDraft ? "Draft Travel Plan" : "Your Final AI Travel Plan";
+  resultTitle.textContent = isDraft ? "Draft itinerary" : "Your travel plan";
   resultSection.classList.remove("hidden");
 
   resultSection.scrollIntoView({
@@ -257,7 +257,7 @@ function downloadPDF() {
 
   const options = {
     margin: 0.5,
-    filename: "ai-travel-plan.pdf",
+    filename: "guarded-crew-travel-plan.pdf",
     image: {
       type: "jpeg",
       quality: 0.98

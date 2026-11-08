@@ -3,76 +3,121 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Guarded crew</title>
-  <link rel="stylesheet" href="/static/style.css">
+  <meta name="theme-color" content="#f7f6f2">
+  <meta name="description" content="Thoughtful travel planning, from the first idea to the final itinerary.">
+  <title>Guarded crew — Travel, thoughtfully planned</title>
+  <link rel="stylesheet" href="/static/style.css?v=2">
 </head>
 <body>
-  <div class="page-bg">
-    <div class="gradient-circle circle-1"></div>
-    <div class="gradient-circle circle-2"></div>
-    <div class="gradient-circle circle-3"></div>
-  </div>
+  <header class="site-header">
+    <a class="brand" href="/" aria-label="Guarded crew home">
+      <span class="brand-mark" aria-hidden="true">g</span>
+      <span>guarded <strong>crew</strong></span>
+    </a>
+    <nav class="main-nav" aria-label="Main navigation">
+      <a href="#how-it-works">How it works</a>
+      <a href="#planner">Plan a trip</a>
+    </nav>
+    <a class="header-cta" href="#planner">Start planning <span aria-hidden="true">↗</span></a>
+  </header>
 
   <main class="app-container">
     <section class="hero-section">
-      <div class="badge">
-        ✈️ Guarded crew — LangGraph, MCP, Supervisor, Guardrails & HITL
+      <div class="hero-copy">
+        <p class="eyebrow"><span class="eyebrow-line"></span> A better way to get away</p>
+        <h1>Good trips start<br>with <em>a good plan.</em></h1>
+        <p class="hero-description">
+          Tell us what you have in mind. We’ll bring the details together,
+          then let you review the plan before it’s ready to go.
+        </p>
+        <a class="primary-link" href="#planner">Plan your next trip <span aria-hidden="true">↓</span></a>
+        <div class="hero-note">
+          <span class="note-stars" aria-hidden="true">✳</span>
+          <span>Thoughtful recommendations. Your call at every step.</span>
+        </div>
       </div>
-      <h1>Plan Your Perfect Trip with AI</h1>
-      <p>
-        Search flights, discover hotels, check weather, assess your budget,
-        and review the AI-generated draft before the final itinerary is created.
-      </p>
+
+      <div class="hero-visual" role="img" aria-label="A mountain lake at sunset">
+        <div class="visual-topline">
+          <span class="visual-dot"></span>
+          <span>YOUR NEXT CHAPTER</span>
+        </div>
+        <div class="visual-caption">
+          <span class="caption-kicker">Start from Hyderabad</span>
+          <span class="caption-title">Somewhere<br>that stays with you.</span>
+        </div>
+        <div class="visual-location">
+          <span class="location-icon" aria-hidden="true">⌖</span>
+          <span>HYDERABAD, INDIA</span>
+        </div>
+      </div>
     </section>
 
-    <section class="planner-card">
-      <div class="card-header">
+    <section id="planner" class="planner-section">
+      <div class="section-heading">
         <div>
-          <h2>Where do you want to go?</h2>
-          <p>
-            Example: Plan a complete 7 days Japan trip from Bangladesh under 2 lakhs.
-          </p>
+          <p class="eyebrow"><span class="eyebrow-line"></span> Make it yours</p>
+          <h2>Where would you like to go?</h2>
         </div>
-        <div class="status-pill">
-          <span class="status-dot"></span>
-          Online
-        </div>
+        <div class="status-pill"><span class="status-dot"></span> Ready when you are</div>
       </div>
+      <p class="section-intro">Share a destination, dates, budget, or simply the kind of trip you’re dreaming about.</p>
 
-      <div class="input-area">
+      <div class="input-shell">
+        <label class="sr-only" for="userInput">Describe your travel plans</label>
         <textarea
           id="userInput"
-          placeholder="Plan a complete 7 days Japan trip including flights, hotels and sightseeing under 2 lakhs..."
+          placeholder="A week in Japan this autumn, leaving from Hyderabad. Great food, a little culture, and a comfortable budget..."
         ></textarea>
-        <button id="sendBtn" onclick="sendMessage()">
-          <span id="btnText">Generate Draft</span>
-          <span id="btnLoader" class="loader hidden"></span>
-        </button>
+        <div class="input-footer">
+          <span class="input-hint"><span aria-hidden="true">↵</span> Press Ctrl + Enter to plan</span>
+          <button id="sendBtn" onclick="sendMessage()">
+            <span id="btnText">Build my itinerary <span aria-hidden="true">→</span></span>
+            <span id="btnLoader" class="loader hidden" aria-label="Planning"></span>
+          </button>
+        </div>
       </div>
 
-      <div class="quick-prompts">
-        <button onclick="setPrompt('Plan a complete 7 days Japan trip from Bangladesh including flights, hotels and sightseeing under 2 lakhs.')">
-          Japan Trip
-        </button>
-        <button onclick="setPrompt('Plan a 5 days Dubai trip from Dhaka with flights, hotels and sightseeing.')">
-          Dubai Trip
-        </button>
-        <button onclick="setPrompt('Plan a 7 days Thailand trip from Bangladesh with budget hotels and sightseeing.')">
-          Thailand Trip
-        </button>
-        <button onclick="setPrompt('Give me all country flight info.')">
-          Global Flights
-        </button>
+      <div class="prompt-row">
+        <span class="prompt-label">A few ideas</span>
+        <div class="quick-prompts">
+          <button onclick="setPrompt('Plan a 7-day Japan trip from Hyderabad with flights, hotels, great food and cultural sights within a budget of ₹1.5 lakh.')">Japan, 7 days <span aria-hidden="true">↗</span></button>
+          <button onclick="setPrompt('Plan a 5-day Dubai trip from Hyderabad with flights, comfortable hotels and a mix of city experiences.')">Dubai, 5 days <span aria-hidden="true">↗</span></button>
+          <button onclick="setPrompt('Plan a relaxed 4-day Kerala trip from Hyderabad with good food, scenic stays and local experiences.')">Kerala, 4 days <span aria-hidden="true">↗</span></button>
+          <button onclick="setPrompt('Help me compare flight options from Hyderabad for an upcoming international trip.')">Find a flight <span aria-hidden="true">↗</span></button>
+        </div>
+      </div>
+    </section>
+
+    <section id="how-it-works" class="process-strip" aria-label="How planning works">
+      <div class="process-heading">
+        <p class="eyebrow"><span class="eyebrow-line"></span> Simple by design</p>
+        <h2>From daydream<br>to departure.</h2>
+      </div>
+      <div class="process-step">
+        <span class="step-number">01</span>
+        <h3>Tell us what matters</h3>
+        <p>Your pace, your budget, the things you love. Start wherever you are.</p>
+      </div>
+      <div class="process-step">
+        <span class="step-number">02</span>
+        <h3>See the whole picture</h3>
+        <p>Flights, stays, weather and costs come together in one clear plan.</p>
+      </div>
+      <div class="process-step">
+        <span class="step-number">03</span>
+        <h3>Make it yours</h3>
+        <p>Review the draft, ask for changes, and approve when it feels right.</p>
       </div>
     </section>
 
     <section id="workflowSection" class="workflow-section hidden">
       <div class="workflow-header">
         <div>
-          <span class="eyebrow">Supervisor Agent</span>
-          <h2>Execution Plan</h2>
+          <span class="eyebrow">Behind the plan</span>
+          <h2>How we’re putting it together</h2>
         </div>
-        <span id="guardrailBadge" class="guardrail-badge">Guardrail passed</span>
+        <span id="guardrailBadge" class="guardrail-badge">Review complete</span>
       </div>
       <p id="supervisorReasoning" class="supervisor-reasoning"></p>
       <div id="agentChips" class="agent-chips"></div>
@@ -81,56 +126,54 @@
     <section id="resultSection" class="result-section hidden">
       <div class="result-header">
         <div>
-          <h2 id="resultTitle">Your AI Travel Plan</h2>
-          <p id="threadInfo">Thread ID: -</p>
+          <span class="eyebrow">Your itinerary</span>
+          <h2 id="resultTitle">Your travel plan</h2>
+          <p id="threadInfo">Plan reference: -</p>
         </div>
         <div class="result-actions">
-          <button class="copy-btn" onclick="copyResult()">Copy</button>
+          <button class="copy-btn" onclick="copyResult()">Copy plan</button>
           <button class="download-btn" onclick="downloadPDF()">Download PDF</button>
         </div>
       </div>
-
       <div id="pdfContent" class="pdf-content">
-        <h1 class="pdf-title">AI Travel Plan</h1>
+        <h1 class="pdf-title">Your Guarded crew travel plan</h1>
         <div id="resultBox" class="result-box"></div>
       </div>
     </section>
 
     <section id="approvalSection" class="approval-section hidden">
-      <div class="approval-icon">👤</div>
+      <div class="approval-icon" aria-hidden="true">✳</div>
       <div class="approval-content">
-        <span class="eyebrow">Human-in-the-Loop</span>
-        <h2>Review the draft itinerary</h2>
-        <p id="approvalRequest">
-          Approve the draft or provide feedback before the final plan is generated.
-        </p>
-
+        <span class="eyebrow">Over to you</span>
+        <h2>Does this feel like your trip?</h2>
+        <p id="approvalRequest">Review the draft and approve it, or tell us what you’d like to change.</p>
+        <label class="sr-only" for="approvalFeedback">Changes you’d like to make</label>
         <textarea
           id="approvalFeedback"
           class="feedback-input"
-          placeholder="Add revision feedback, for example: reduce the hotel cost and add one free day..."
+          placeholder="For example: add a slower morning, find a quieter hotel, or keep the total under ₹1 lakh..."
         ></textarea>
-
         <div class="approval-actions">
-          <button id="approveBtn" class="approve-btn" onclick="submitApproval(true)">
-            Approve & Generate Final
-          </button>
-          <button id="reviseBtn" class="revise-btn" onclick="submitApproval(false)">
-            Revise Using Feedback
-          </button>
+          <button id="approveBtn" class="approve-btn" onclick="submitApproval(true)">Looks good, continue <span aria-hidden="true">→</span></button>
+          <button id="reviseBtn" class="revise-btn" onclick="submitApproval(false)">Request a change</button>
         </div>
       </div>
     </section>
 
-    <section id="errorBox" class="error-box hidden"></section>
+    <section id="errorBox" class="error-box hidden" role="alert"></section>
   </main>
 
-  <footer>
-    Built with FastAPI, LangGraph, Groq, PostgreSQL, Tavily, AviationStack and MCP
+  <footer class="site-footer">
+    <a class="brand footer-brand" href="/" aria-label="Guarded crew home">
+      <span class="brand-mark" aria-hidden="true">g</span>
+      <span>guarded <strong>crew</strong></span>
+    </a>
+    <p>Thoughtful travel planning, with room for the unexpected.</p>
+    <span class="footer-origin">Made for curious travellers in India <span aria-hidden="true">✳</span></span>
   </footer>
 
   <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-  <script src="/static/script.js"></script>
+  <script src="/static/script.js?v=2"></script>
 </body>
 </html>
